@@ -1,5 +1,6 @@
 package com.juanunzu.clau2024
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,18 +11,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.juanunzu.clau2024.components.ItemCard
-import com.juanunzu.clau2024.components.showToast
 import com.juanunzu.clau2024.ui.theme.CLAU2024Theme
+import kotlin.reflect.KFunction0
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,39 +29,70 @@ class MainActivity : ComponentActivity() {
         setContent {
             CLAU2024Theme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    ItemCardShowcase(
-                        modifier = Modifier.padding(innerPadding)
+                    MainScreen(
+                        modifier = Modifier.padding(innerPadding),
+                        onComposeExampleClick = ::navigateToItemCardComposeActivity,
+                        onViewExampleClick = ::navigateToItemCardViewActivity,
+                        onAccordionExampleClick = ::navigateToAccordionActivity
                     )
                 }
             }
         }
     }
+
+    private fun navigateToItemCardViewActivity() {
+        Intent(this@MainActivity, ItemCardViewActivity::class.java).also {
+            startActivity(it)
+        }
+    }
+
+    private fun navigateToItemCardComposeActivity() {
+        Intent(this@MainActivity, ItemCardComposeActivity::class.java).also {
+            startActivity(it)
+        }
+    }
+
+    private fun navigateToAccordionActivity() {
+        Intent(this@MainActivity, AccordionActivity::class.java).also {
+            startActivity(it)
+        }
+    }
 }
 
 @Composable
-fun ItemCardShowcase(modifier: Modifier = Modifier) {
-    val context = LocalContext.current.applicationContext
+private fun MainScreen(
+    modifier: Modifier = Modifier,
+    onComposeExampleClick: () -> Unit = {},
+    onViewExampleClick: () -> Unit = {},
+    onAccordionExampleClick: () -> Unit = {}
+) {
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        ItemCard(
-            productImage = ImageBitmap.imageResource(id = R.drawable.botas_image),
-            productTitle = "Botas de viaje",
-            productSubtitle = "Llegan hoy",
-            onFavoriteClick = { showToast(context, "added to favorites") },
-            onCartClick = { showToast(context, "added to cart") },
-            onInfoClick = { showToast(context, "clicked in more info") },
-        )
+        Button(onClick = { onComposeExampleClick() }) {
+            Text("Go to Compose example")
+        }
         Spacer(modifier = Modifier.height(24.dp))
-        ItemCard(
-            productImage = ImageBitmap.imageResource(id = R.drawable.botas_image),
-            productTitle = { Text(text = "Botas de viaje") },
-            productSubtitle = { Text(text = "Llegan hoy") },
-            onFavoriteClick = { showToast(context, "added to favorites") },
-            onCartClick = { showToast(context, "added to cart") },
-            onInfoClick = { showToast(context, "clicked in more info") },
-        )
+        Button(onClick = { onViewExampleClick() }) {
+            Text("Go to View example")
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+        Button(onClick = { onAccordionExampleClick() }) {
+            Text("Go to Accordion example")
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MainScreenPreview(modifier: Modifier = Modifier) {
+    CLAU2024Theme {
+        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+            MainScreen(
+                modifier = Modifier.padding(innerPadding)
+            )
+        }
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -51,19 +52,29 @@ fun ItemCard(
 ) {
     Card(
         modifier = modifier
+            // ya que tengo los strings, puedo agregarlos concatenados a la descripcion
+            // accesible de la card. Por lo cual, mediante el clearAndSetSemantics
+            // borro la a11y completa del componente entero y agrego las dos cosas que necesito:
+            // texto alternativo y custom actions.
+            // Los botones internos serán ignorados automáticamente debido al clearAndSetSemantics.
             .clearAndSetSemantics {
+                // agrego texto alternativo
                 contentDescription = "$productTitle, $productSubtitle"
+
+                // agrego customActions
                 customActions = listOf(
-                    CustomAccessibilityAction(
-                        label = "add to favorites",
-                        action = { onFavoriteClick(); true }),
-                    CustomAccessibilityAction(
-                        label = "add to cart",
-                        action = { onCartClick(); true }),
-                    CustomAccessibilityAction(
-                        label = "more info",
-                        action = { onInfoClick(); true }
-                    )
+                    CustomAccessibilityAction("agregar a favoritos") {
+                        onFavoriteClick()
+                        true
+                    },
+                    CustomAccessibilityAction("agregar al carrito") {
+                        onCartClick()
+                        true
+                    },
+                    CustomAccessibilityAction("ver mas informacion") {
+                        onInfoClick()
+                        true
+                    }
                 )
             },
         shape = RoundedCornerShape(8.dp),
@@ -131,18 +142,28 @@ fun ItemCard(
 ) {
     Card(
         modifier = modifier
+            // siendo que en este caso no tengo los strings porque los textos se pasan
+            // dentro de su respectivo slot (caso más real en componentes de sistemas de diseño),
+            // necesito agrupar los textos internos en un solo container.
+            // Esto se logra indicando (mergeDescendants = true) dentro del modifier de semantics.
+
+            // las custom actions se agregan igual que en el caso clearAndSetSemantics.
             .semantics(mergeDescendants = true) {
+                
+                // agrego customActions
                 customActions = listOf(
-                    CustomAccessibilityAction(
-                        label = "add to favorites",
-                        action = { onFavoriteClick(); true }),
-                    CustomAccessibilityAction(
-                        label = "add to cart",
-                        action = { onCartClick(); true }),
-                    CustomAccessibilityAction(
-                        label = "more info",
-                        action = { onInfoClick(); true }
-                    )
+                    CustomAccessibilityAction("agregar a favoritos") {
+                        onFavoriteClick()
+                        true
+                    },
+                    CustomAccessibilityAction("agregar al carrito") {
+                        onCartClick()
+                        true
+                    },
+                    CustomAccessibilityAction("ver mas informacion") {
+                        onInfoClick()
+                        true
+                    }
                 )
             },
         shape = RoundedCornerShape(8.dp),
@@ -179,7 +200,7 @@ fun ItemCard(
                     contentDescription = null,
                     modifier = Modifier
                         .size(24.dp)
-                        .clearAndSetSemantics { }
+                        .clearAndSetSemantics {  }
                         .clickable { onFavoriteClick() },
                     colorFilter = ColorFilter.tint(CLAU2024Theme.accentColor),
                 )
@@ -188,7 +209,7 @@ fun ItemCard(
                     contentDescription = null,
                     modifier = Modifier
                         .size(24.dp)
-                        .clearAndSetSemantics { }
+                        .clearAndSetSemantics {  }
                         .clickable { onCartClick() },
                     colorFilter = ColorFilter.tint(CLAU2024Theme.accentColor),
                 )
@@ -197,7 +218,7 @@ fun ItemCard(
                     contentDescription = null,
                     modifier = Modifier
                         .size(24.dp)
-                        .clearAndSetSemantics { }
+                        .clearAndSetSemantics {  }
                         .clickable { onInfoClick() },
                     colorFilter = ColorFilter.tint(CLAU2024Theme.accentColor),
                 )
@@ -212,7 +233,7 @@ fun ItemCardPreviews(modifier: Modifier = Modifier) {
     CLAU2024Theme {
         val context = LocalContext.current.applicationContext
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().background(Color.White),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
